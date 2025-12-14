@@ -20,7 +20,7 @@
 # production
 /build
 
-# misc
+# miscgit remote remove origin
 .DS_Store
 *.pem
 

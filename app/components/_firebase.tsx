@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 const firebaseConfig = {
-  apiKey: "AIzaSyCWbs6tfSbWiZIxqk9SIdrRYqfSbRcu_3Q",
+  apiKey: process.env.FIREBASE_KEY,
   authDomain: "project-a-60ef1.firebaseapp.com",
   projectId: "project-a-60ef1",
   storageBucket: "project-a-60ef1.firebasestorage.app",

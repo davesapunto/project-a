@@ -13,7 +13,7 @@ export default function Profile(){
     const [user, loading] = useAuthState(auth);
 
     return(
-        <div className="bg-zinc-900 min-w-screen h-[92vh]">
+        <div className="bg-zinc-900 min-w-screen h-[92vh] font-mono">
             <Header/>
             <div className="mt-20 min-w-screen h-[30vh] flex items-center justify-center">
                 <Card className="flex justify-center bg-transparent w-[50vw] h-[75%] border border-neutral-400">
