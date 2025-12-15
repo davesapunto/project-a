@@ -36,18 +36,12 @@ export default function Home(){
   const [loadingElemetents, setLoadingElements] = useState(true);
 
   useEffect(() => {
-    const store = localStorage.getItem("movies");
-    if (store) {
-      setPopularMovies(JSON.parse(store));
-      return;
-    }
-
     async function load() {
       try {
         const res = await fetch("/api/tmdb/popular_movies");
         const data = await res.json();
         setPopularMovies(data);
-        localStorage.setItem("movies", JSON.stringify(data));
+        console.log(data)
       } catch (err) {
         console.error(err);
       } finally{
@@ -59,24 +53,18 @@ export default function Home(){
 
 
   useEffect(() => {
-    const store = localStorage.getItem("tv");
-    if (store) {
-      setPopularTv(JSON.parse(store));
-      return;
-    }
-
     async function load() {
       try {
         const res = await fetch("/api/tmdb/popular_tv");
         const data = await res.json();
         setPopularTv(data);
-        localStorage.setItem("tv", JSON.stringify(data));
       } catch (err) {
         console.error(err);
       }
     }
     load();
   }, []);
+
 
   if(loading){
     return(
@@ -123,7 +111,7 @@ export default function Home(){
                       <Link href={user ? `/movie/${movie.id}` : '/login'}>
                         <img 
                         src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        className="border w-full h-full object-cover rounded-xl"
+                        className="w-full h-full object-cover rounded-xl"
                         />
                       </Link>
                       <p className="mt-2">{movie.title || movie.name}</p>
@@ -167,7 +155,7 @@ export default function Home(){
                       <Link href={user ? `/tv/${tv.id}` : '/login'}>
                         <img 
                         src={`https://image.tmdb.org/t/p/w500${tv.poster_path}`}
-                        className="border w-full h-full object-cover rounded-xl"
+                        className="w-full h-full object-cover rounded-xl"
                         />
                       </Link>
                       <p className="mt-2">{tv.title || tv.name}</p>

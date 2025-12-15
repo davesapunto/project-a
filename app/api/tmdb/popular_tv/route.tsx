@@ -4,7 +4,7 @@ export async function GET() {
       "https://api.themoviedb.org/3/trending/tv/day?language=en-US",
       {
         headers: {
-          Authorization: `Bearer ${process.env.TMDB_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_KEY}`,
         },
         next: { revalidate: 3600 },
       }

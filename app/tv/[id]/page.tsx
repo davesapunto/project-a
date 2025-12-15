@@ -57,7 +57,7 @@ export default function TvPage() {
     <div className="min-screen h-auto font-mono">
       <Header/>
       <div className="mt-19 min-w-screen h-[92.25vh]  flex justify-center">
-        <div className="w-full h-[70%] flex sm:flex-row 2xs:flex-col items-center justify-center gap-4">
+        <div className="w-full h-[70%] flex sm:flex-row 2xs:flex-col items-center justify-center gap-6">
           <img
           src={`https:image.tmdb.org/t/p/w500${tv.poster_path}`}
           className="h-[90%] rounded-lg"
