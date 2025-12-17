@@ -80,7 +80,7 @@ export default function Explore() {
       <Header />
         
         {}
-      <div className="mt-28 sm:[100%] xl:w-[80%] h-[92vh]  flex flex-col">
+      <div className="mt-36 sm:[100%] xl:w-[80%] h-[92vh]  flex flex-col">
         <div className="flex flex-col justify-center text-3xl font-semibold w-full h-[15%]">
           <h1>More Popular Movies</h1>
           <Link href="/" className="text-lg flex items-center gap-1 underline">

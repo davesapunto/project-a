@@ -23,7 +23,7 @@ const Header = () => {
             {/* Desktop Menu - Hidden on xs and below */}
             <div className="hidden md:flex md:w-[25%] md:justify-center md:items-center md:gap-6">
                 <Link href="/" className="text-lg font-semibold">ZINC</Link>
-                <ul className="hidden lg:flex gap-6">
+                <ul className="hidden lg:flex gap-6 underline">
                     <li><Link href="/explore">Explore</Link></li>
                 </ul>
             </div>
