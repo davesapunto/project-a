@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import {getAuth} from 'firebase/auth';
 import Header from '../../components/_header'
-import { doc, setDoc, getFirestore} from 'firebase/firestore'; 
+import { getDocs, addDoc, collection, getFirestore} from 'firebase/firestore'; 
 import Link from "next/link";
 
 export default function MoviePage() {
@@ -16,7 +16,8 @@ export default function MoviePage() {
   const auth = getAuth();
   const [user, loadingUser] = useAuthState(auth);
   const db = getFirestore();
-  const [review, setReview] = useState('');
+  const [review, setReview] = useState("");
+  const [documents, setDocuments] = useState<any[]>([])
 
   useEffect(() => {
     if (!id) return;
@@ -27,7 +28,6 @@ export default function MoviePage() {
         const res = await fetch(`/api/tmdb/movie/${id}`);
         const data = await res.json();
         setMovie(data);
-        console.log(data);
       } catch (err) {
         console.error("Error fetching movie:", err);
       } finally {
@@ -38,10 +38,65 @@ export default function MoviePage() {
     loadMovie();
   }, [id]);
 
+
+  {/*     ----- LOAD USER REVIEW FROM MOVIE -----     */}
   useEffect(() => {
-    console.log(movie?.genres);
-    console.log(movie)
-  })
+    if(!movie || !movie.title ) return;
+    async function fetchDocs() {
+      try {
+        const querySnapshot = await getDocs(
+          collection(db, 'movie', movie?.title, 'movie_reviews')
+        );
+
+        const docsArray = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setDocuments(docsArray);
+        console.log(documents)
+      } catch (err) {
+        console.error('Error fetching Docs', err);
+      }
+    }
+
+    fetchDocs();
+  }, [movie?.title, db]);
+
+
+  const handleSubmitReview = async () => {
+    if (!review.trim()) return;
+    try {
+
+      {/* ----- MOVIE REVIEW ----- */}
+      await addDoc(collection(db, "movie", movie.title, "movie_reviews"), {
+        user_id: user?.uid,
+        review: review,
+      })
+
+      {/* ----- USER REVIEW ----- */}
+      await addDoc(collection(db, "user", "user_review", movie.title,), {
+        user_id: user?.uid,
+        review: review,
+      })
+
+      setReview("");
+      console.log("Review saved");
+
+      const querySnapshot = await getDocs(
+        collection(db, 'movie', movie.title, 'movie_reviews')
+      );
+      const docsArray = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setDocuments(docsArray);
+
+    } catch (err) {
+      console.error("Error saving review:", err);
+    }
+  };
+
+
 
   if (loading)
     return (
@@ -61,11 +116,13 @@ export default function MoviePage() {
       </div>
     );
 
+  
+
 
   return (
     <div className="min-screen h-auto font-mono">
       <Header/>
-      <div className="mt-19 min-w-screen h-[92.25vh] flex justify-center items-center flex-col">
+      <div className="mt-40 min-w-screen h-auto flex justify-center items-center flex-col">
         <div className="w-full h-[70%] flex sm:flex-row 2xs:flex-col items-center justify-center gap-6">
           <img
           src={`https:image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -93,11 +150,34 @@ export default function MoviePage() {
                 placeholder='Write your review here'
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
-                onKeyDown={(e) => EventChange}>
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmitReview();
+                  }
+                }}
+                >
                 </input>
               </div>
-              <div>
-
+              <div className= "h-auto flex flex-col gap-4">
+                {documents.length > 0 ? (
+                  documents.map((doc) => (
+                    <div key={doc.id} className="flex items-center border h-[10vh] border-zinc-600 rounded-xl bg-zinc-900">
+                      {user ? <UserIconSVG/> : 'No Icon'}
+                      <div key={doc.id} className="ml-12 w-80%">
+                        <p>{doc.review}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                <div className="flex items-center space-x-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                  </div>
+                </div>
+                )}
               </div>
         </div>
       </div>
@@ -109,7 +189,7 @@ export default function MoviePage() {
 
 const UserIconSVG = () => {
   return(
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8 ml-8">
     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
     </svg>
   )
